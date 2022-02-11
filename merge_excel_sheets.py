@@ -1,6 +1,8 @@
 # 2022/02/10 Terry Vance
 # importing the module
 import pandas
+import XlsxWriter
+
 
 # NOTE each of the underlying xls files needs to have the PSLC value - in some of them, the column header needs to be renamed from PS Loc
 # Also need to make sure you export OpsTracker files with the file name option checked
