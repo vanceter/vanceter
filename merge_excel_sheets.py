@@ -15,7 +15,7 @@ import xlsxwriter
 
 # reading only the columns needed from each file
 # documentation on pandas read_excel https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
-f_sites = pd.read_excel("opstracker_sites.xlsx",usecols=['SITE_NAME','ADDRESS','CITY','COUNTY','PSLC','POWER_METER', 'GEN_STATUS','GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'IS_HUB','IS_HUB_MICROWAVE','REMOTE_MONITORING','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY'])
+f_sites = pd.read_excel("opstracker_sites.xlsx", usecols=['SITE_NAME','ADDRESS','CITY','COUNTY','PSLC','POWER_METER', 'GEN_STATUS','GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'IS_HUB','IS_HUB_MICROWAVE','REMOTE_MONITORING','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY'])
 f_gens = pd.read_excel("opstracker_generators.xlsx", usecols=['PSLC', 'FUEL_TYPE1'])
 f_cells = pd.read_excel("NorCal_CellInfo.xlsx", usecols=['PSLC', 'eNodeB'])
 f_cells5g = pd.read_excel("norcal_cell_info_5g.xlsx", usecols=['PSLC', 'GNODEB'])
@@ -34,7 +34,7 @@ f_merged_ops = f_merged_ops.merge(f_pge, left_on="PSLC", right_on="PSLC", how="l
   
 # creating 2 new files, the PSPS_Main for Gennie, and a version of it with eNB/gNB for SP
 # documentation on pandas to_excel https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_excel.html?highlight=to_excel
-f_merged.to_excel("PSPS_MAIN_SP.xlsx", index = False, sheet_name='PSPS_MAIN_SP', columns=['POWER_METER','Fire Tier', 'PSPS PROB','PSLC', 'PG&E Fee Property', 'SITE_NAME', 'ADDRESS','CITY','COUNTY', 'GEN_STATUS','FUEL_TYPE1', 'GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'REMOTE_MONITORING', 'IS_HUB_MICROWAVE', 'IS_HUB','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY', 'eNodeB', 'GNODEB'])
+#f_merged.to_excel("PSPS_MAIN_SP.xlsx", index = False, sheet_name='PSPS_MAIN_SP', columns=['POWER_METER','Fire Tier', 'PSPS PROB','PSLC', 'PG&E Fee Property', 'SITE_NAME', 'ADDRESS','CITY','COUNTY', 'GEN_STATUS','FUEL_TYPE1', 'GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'REMOTE_MONITORING', 'IS_HUB_MICROWAVE', 'IS_HUB','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY', 'eNodeB', 'GNODEB'])
 #f_merged_ops.to_excel("PSPS_MAIN.xlsx", index = False, sheet_name='PSPS_MAIN', columns=['POWER_METER','Fire Tier', 'PSPS PROB','PSLC', 'PG&E Fee Property', 'SITE_NAME', 'ADDRESS','CITY','COUNTY', 'GEN_STATUS','FUEL_TYPE1', 'GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'REMOTE_MONITORING', 'IS_HUB_MICROWAVE', 'IS_HUB','SITETECH_NAME','SITETECH_MANAGER_NAME'])
 # Change the write tool to include ability to add formatting to the output 
 
@@ -43,6 +43,7 @@ f_merged.to_excel("PSPS_MAIN_SP.xlsx", index = False, sheet_name='PSPS_MAIN_SP',
 writer = pd.ExcelWriter('PSPS_MAIN.xlsx', engine='xlsxwriter')
 # Create the merged sheet and output to the file name based on the writer variable
 f_merged_ops.to_excel(writer, index=False, sheet_name='PSPS_MAIN',columns=['POWER_METER','Fire Tier', 'PSPS PROB','PSLC', 'PG&E Fee Property', 'SITE_NAME', 'ADDRESS','CITY','COUNTY', 'GEN_STATUS','FUEL_TYPE1', 'GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'REMOTE_MONITORING', 'IS_HUB_MICROWAVE', 'IS_HUB','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY'])
+
 # Establish the workbook variable
 workbook = writer.book
 
@@ -65,6 +66,46 @@ worksheet.set_column('R:R', 28)
 worksheet.set_column('S:S', 28, cell_format_center)
 # Set some worksheet formatting, including creating filter dropdowns and freeze the top row
 worksheet.freeze_panes(1, 0)
-worksheet.autofilter('A1:R9999')
+worksheet.autofilter('A1:S9999')
 # Save the sheet
 writer.save()
+
+# Format the PSPS_MAIN_SP sheet for SP
+# establish the xlsxwriter functionality, defining "writer" as the variable for the workbook filename
+writer_sp = pd.ExcelWriter('PSPS_MAIN_SP.xlsx', engine='xlsxwriter')
+# Create the merged sheet and output to the file name based on the writer variable
+f_merged.to_excel(writer_sp, index = False, sheet_name='PSPS_MAIN_SP', columns=['POWER_METER','Fire Tier', 'PSPS PROB','PSLC', 'PG&E Fee Property', 'SITE_NAME', 'ADDRESS','CITY','COUNTY', 'GEN_STATUS','FUEL_TYPE1', 'GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'REMOTE_MONITORING', 'IS_HUB_MICROWAVE', 'IS_HUB','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY', 'eNodeB', 'GNODEB'])
+
+# Establish the workbook variable
+workbook_sp = writer_sp.book
+
+# Setup some formating definitions
+# formatting for any cells/columns that need to be center justified
+cell_format_center_sp = workbook_sp.add_format()
+cell_format_center_sp.set_align('center')
+
+# Define the worksheet variable
+worksheet_sp = writer_sp.sheets['PSPS_MAIN_SP']
+# Apply some formatting to groups of columns, including cell width and applying the cell formatting previously defined as appropriate
+worksheet_sp.set_column('A:A', 20, cell_format_center_sp)
+worksheet_sp.set_column('B:D', 10, cell_format_center_sp)
+worksheet_sp.set_column('E:E', 18, cell_format_center_sp)
+worksheet_sp.set_column('F:G', 44)
+worksheet_sp.set_column('H:I', 22)
+worksheet_sp.set_column('J:P', 22, cell_format_center_sp)
+worksheet_sp.set_column('Q:Q', 22)
+worksheet_sp.set_column('R:R', 28)
+worksheet_sp.set_column('S:S', 28, cell_format_center_sp)
+worksheet_sp.set_column('T:U', 10, cell_format_center_sp)
+# Set some worksheet formatting, including creating filter dropdowns and freeze the top row
+worksheet_sp.freeze_panes(1, 0)
+worksheet_sp.autofilter('A1:U9999')
+# Save the sheet
+writer_sp.save()
+
+
+
+# Still working on finding a way to replace 0's in certain columns with No, and 1's with Yes
+# df = pd.read_excel("PSPS_MAIN.xlsx")
+# df.loc[df["REMOTE_MONITORING"] == 0, "REMOTE_MONITORING"] = "No"
+# df.to_excel("PSPS_MAIN_RM.xlsx", index = False, sheet_name='PSPS_MAIN_SP', columns=['POWER_METER','Fire Tier', 'PSPS PROB','PSLC', 'PG&E Fee Property', 'SITE_NAME', 'ADDRESS','CITY','COUNTY', 'GEN_STATUS','FUEL_TYPE1', 'GEN_PORTABLE_PLUG', 'GEN_PORTABLE_PLUG_TYPE', 'REMOTE_MONITORING', 'IS_HUB_MICROWAVE', 'IS_HUB','SITETECH_NAME','SITETECH_MANAGER_NAME', 'POWER_COMPANY', 'eNodeB', 'GNODEB'])
