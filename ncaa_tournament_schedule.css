@@ -1,0 +1,21 @@
+/* NCAA Basketball Tournament Schedule */
+.tournament-schedule {
+  font-family: Arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.tournament-schedule th, .tournament-schedule td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.game-row {
+  background-color: #f9f9f9;
+}
+
+.game-date {
+  font-weight: bold;
+}
+
